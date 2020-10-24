@@ -76,11 +76,16 @@ impl Scanner {
                     self.add_token(TokenType::Char('('));
                 }
             }
-            ')' => self.add_token(TokenType::RightParen, None),
+            ')' => self.add_token(TokenType::Char(')')),
             '[' => self.add_token(TokenType::RightBracket, None),
-            ']' => self.add_token(TokenType::LeftBracket, None),
+            ']' => self.add_token(TokenType::Char(']')),
             '!' => {
                 if self.next_is('[') {
+                    self.advance();
+                    let mut alt = String::new();
+                    while !self.next_is(']') {
+                        alt.push(self.advance());
+                    }
                 } else {
                     self.add_token(TokenType::Char('!'));
                 }
