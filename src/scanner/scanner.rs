@@ -77,18 +77,15 @@ impl Scanner {
                 }
             }
             ')' => self.add_token(TokenType::Char(')')),
-            '[' => self.add_token(TokenType::RightBracket, None),
+            '[' => self.add_token(TokenType::Char('[')), // temp
             ']' => self.add_token(TokenType::Char(']')),
             '!' => {
                 if self.next_is('[') {
                     self.advance();
                     let mut alt = String::new();
 
-                    let mut counter = 0usize;
-
                     while !self.next_is(']') {
                         alt.push(self.advance());
-                        counter += 1;
                     }
                     if self.next_is('(') {
                         let mut link = String::new();
@@ -97,6 +94,13 @@ impl Scanner {
                             link.push(self.advance());
                         }
                     } else {
+                        self.add_token(TokenType::Char('!'));
+                        self.add_token(TokenType::Char('['));
+                        let chars: Vec<char> = alt.chars().collect();
+                        for c in chars {
+                            self.add_token(TokenType::Char(c));
+                        }
+                        self.add_token(TokenType::Char(']'));
                     }
                 } else {
                     self.add_token(TokenType::Char('!'));
