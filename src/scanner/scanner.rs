@@ -83,8 +83,20 @@ impl Scanner {
                 if self.next_is('[') {
                     self.advance();
                     let mut alt = String::new();
+
+                    let mut counter = 0usize;
+
                     while !self.next_is(']') {
                         alt.push(self.advance());
+                        counter += 1;
+                    }
+                    if self.next_is('(') {
+                        let mut link = String::new();
+                        self.advance();
+                        while !self.next_is(')') {
+                            link.push(self.advance());
+                        }
+                    } else {
                     }
                 } else {
                     self.add_token(TokenType::Char('!'));
