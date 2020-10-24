@@ -139,6 +139,7 @@ impl Scanner {
                 }
             }
             '\n' => self.line += 1,
+            x => self.add_token(TokenType::Char(x)),
         }
     }
 }
