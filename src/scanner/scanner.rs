@@ -23,13 +23,16 @@ impl Scanner {
         self.current >= self.source.len()
     }
 
-    fn add_token(&mut self, toktype: TokenType, literal: Option<String>) {
+    fn add_token(&mut self, toktype: TokenType) {
         let text: String = self.source[self.start..self.current].into();
-        self.tokens
-            .push(Token::new(toktype, text, self.line, literal));
+        self.tokens.push(Token::new(toktype, text, self.line));
     }
     fn advance(&mut self) -> char {
         self.current += 1;
+        self.chars[self.current - 1]
+    }
+    fn goback(&mut self) -> char {
+        self.current -= 1;
         self.chars[self.current - 1]
     }
     fn next_is(&mut self, expected: char) -> bool {
@@ -67,16 +70,24 @@ impl Scanner {
 
         match c {
             '(' => {
-                if self.prev_is(expected: char) {
+                if self.prev_is(']') {
                     // do link stuff
+                } else {
+                    self.add_token(TokenType::Char('('));
                 }
             }
             ')' => self.add_token(TokenType::RightParen, None),
             '[' => self.add_token(TokenType::RightBracket, None),
             ']' => self.add_token(TokenType::LeftBracket, None),
+            '!' => {
+                if self.next_is('[') {
+                } else {
+                    self.add_token(TokenType::Char('!'));
+                }
+            }
             '#' => {
                 if self.current != 1 {
-                    self.add_token(TokenType::Char, Some("#".to_string()))
+                    self.add_token(TokenType::Char('#'));
                 } else {
                     if self.next_is('#') {
                         self.advance();
@@ -87,14 +98,14 @@ impl Scanner {
                             while !self.is_at_end() {
                                 title.push(self.advance());
                             }
-                            self.add_token(TokenType::H3, Some(title));
+                            self.add_token(TokenType::H3(title));
                         } else {
                             let mut title = String::new();
 
                             while !self.is_at_end() {
                                 title.push(self.advance());
                             }
-                            self.add_token(TokenType::H2, Some(title));
+                            self.add_token(TokenType::H2(title));
                         }
                     } else {
                         let mut title = String::new();
@@ -102,7 +113,7 @@ impl Scanner {
                         while !self.is_at_end() {
                             title.push(self.advance());
                         }
-                        self.add_token(TokenType::H1, Some(title));
+                        self.add_token(TokenType::H1(title));
                     }
                 }
             }
