@@ -57,13 +57,13 @@ impl Scanner {
         if self.is_at_end() {
             return '\0';
         }
-        self.chars[self.current]
+        self.chars[self.current - 1]
     }
     fn peek_next(&self) -> char {
-        if self.current >= self.source.len() {
+        if self.current >= self.source.len() || self.is_at_end() {
             return '\0';
         }
-        self.chars[self.current as usize]
+        self.chars[self.current]
     }
 
     pub fn scan_token(&mut self) {
@@ -88,12 +88,14 @@ impl Scanner {
                     while !self.next_is(']') {
                         alt.push(self.advance());
                     }
+                    self.advance();
                     if self.next_is('(') {
                         let mut link = String::new();
                         self.advance();
                         while !self.next_is(')') {
                             link.push(self.advance());
                         }
+                        self.advance();
                         self.add_token(TokenType::Img(alt, link));
                     } else {
                         self.add_token(TokenType::Char('!'));
@@ -109,44 +111,45 @@ impl Scanner {
                 }
             }
             '#' => {
-                if self.current != 1 {
-                    self.add_token(TokenType::Char('#'));
-                } else {
-                    if self.next_is('#') {
+                if self.next_is('#') {
+                    self.advance();
+                    if self.peek_next() == '#' {
                         self.advance();
-                        if self.peek_next() == '#' {
+                        let mut title = String::new();
+
+                        while self.peek_next() != '\n' {
+                            title.push(self.peek());
                             self.advance();
-                            let mut title = String::new();
-
-                            while !self.is_at_end() {
-                                title.push(self.advance());
-                            }
-                            self.add_token(TokenType::H3(title));
-                        } else {
-                            let mut title = String::new();
-
-                            while !self.is_at_end() {
-                                title.push(self.advance());
-                            }
-                            self.add_token(TokenType::H2(title));
                         }
+                        self.add_token(TokenType::H3(title));
                     } else {
                         let mut title = String::new();
 
-                        while !self.is_at_end() {
-                            title.push(self.advance());
+                        while self.peek() != '\n' {
+                            title.push(self.peek());
+                            self.advance();
                         }
-                        self.add_token(TokenType::H1(title));
+                        self.add_token(TokenType::H2(title));
                     }
+                } else {
+                    let mut title = String::new();
+                    self.advance();
+
+                    while self.peek() != '\n' {
+                        title.push(self.peek());
+                        self.advance();
+                    }
+                    self.add_token(TokenType::H1(title));
                 }
             }
-            '\n' => self.line += 1,
+            '\n' => {
+                self.line += 1;
+            }
             x => self.add_token(TokenType::Char(x)),
         }
     }
     pub fn scan_tokens(&mut self) {
         while !self.is_at_end() {
-            println!("Debug");
             self.scan_token();
         }
     }
