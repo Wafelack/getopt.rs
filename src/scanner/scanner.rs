@@ -1,12 +1,12 @@
 use crate::scanner::tokens::*;
 
-struct Scanner {
-    source: String,
-    chars: Vec<char>,
-    start: usize,
-    current: usize,
-    line: usize,
-    tokens: Vec<Token>,
+pub struct Scanner {
+    pub source: String,
+    pub chars: Vec<char>,
+    pub start: usize,
+    pub current: usize,
+    pub line: usize,
+    pub tokens: Vec<Token>,
 }
 impl Scanner {
     pub fn new(source: String) -> Scanner {
@@ -65,6 +65,7 @@ impl Scanner {
         }
         self.chars[self.current as usize]
     }
+
     pub fn scan_token(&mut self) {
         let c = self.advance();
 
@@ -93,6 +94,7 @@ impl Scanner {
                         while !self.next_is(')') {
                             link.push(self.advance());
                         }
+                        self.add_token(TokenType::Img(alt, link));
                     } else {
                         self.add_token(TokenType::Char('!'));
                         self.add_token(TokenType::Char('['));
@@ -140,6 +142,12 @@ impl Scanner {
             }
             '\n' => self.line += 1,
             x => self.add_token(TokenType::Char(x)),
+        }
+    }
+    pub fn scan_tokens(&mut self) {
+        while !self.is_at_end() {
+            println!("Debug");
+            self.scan_token();
         }
     }
 }

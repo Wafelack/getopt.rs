@@ -7,9 +7,9 @@ pub enum TokenType {
     H3(String),
 }
 pub struct Token {
-    toktype: TokenType,
-    lexeme: String,
-    line: usize,
+    pub toktype: TokenType,
+    pub lexeme: String,
+    pub line: usize,
 }
 impl Token {
     pub fn new(toktype: TokenType, lexeme: String, line: usize) -> Token {
