@@ -30,11 +30,17 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
         } else {
             match tok.toktype {
                 TokenType::Char(c) => {
-                    if toks[i - 1].toktype != TokenType::Char(c) {
+                    if let TokenType::Char(_) = toks[i - 1].toktype {
+                        content.push(c);
+                    } else {
                         content.push_str("<p>");
+                        content.push(c);
                     }
-                    content.push(c);
-                    if i + 1 >= toks.len() || toks[i + 1].toktype != TokenType::Char(c) {
+                    if i + 1 >= toks.len() {
+                        content.push_str("</p>\n");
+                    } else if let TokenType::Char(_) = toks[i + 1].toktype {
+                        continue;
+                    } else {
                         content.push_str("</p>\n")
                     }
                 }
