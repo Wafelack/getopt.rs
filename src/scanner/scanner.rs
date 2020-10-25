@@ -31,10 +31,6 @@ impl Scanner {
         self.current += 1;
         self.chars[self.current - 1]
     }
-    fn goback(&mut self) -> char {
-        self.current -= 1;
-        self.chars[self.current - 1]
-    }
     fn next_is(&mut self, expected: char) -> bool {
         if self.is_at_end() {
             return false;

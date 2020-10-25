@@ -4,7 +4,6 @@ mod scanner;
 use lines_from_file::lines_from_file;
 use parser::parser::parse_tokens;
 use scanner::scanner::Scanner;
-use scanner::tokens::TokenType;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -12,10 +11,11 @@ use std::path::Path;
 #[cfg(test)]
 mod test {
     use super::*;
+    use scanner::tokens::TokenType;
 
     #[test]
     fn tokenprinting() {
-        let mut src =
+        let src =
             "#Test\n##Test2\n###Test3 #notworking\n[my website](https://wafelack.fr)![alt](link)"
                 .to_string();
 
@@ -38,7 +38,7 @@ mod test {
     }
     #[test]
     fn parsedprinting() {
-        let mut src =
+        let src =
             "#Test\n##Test2\n###Test3 #notworking\n[my website](https://wafelack.fr)![alt](link) This is some text\ntest"
                 .to_string();
         let mut scanner = Scanner::new(src.clone());
