@@ -145,6 +145,7 @@ impl Scanner {
                             self.advance();
                         }
                         self.add_token(TokenType::H3(title));
+                        self.add_token(TokenType::Br);
                     } else {
                         let mut title = String::new();
                         self.advance();
@@ -154,6 +155,7 @@ impl Scanner {
                             self.advance();
                         }
                         self.add_token(TokenType::H2(title));
+                        self.add_token(TokenType::Br);
                     }
                 } else {
                     let mut title = String::new();
@@ -164,9 +166,11 @@ impl Scanner {
                         self.advance();
                     }
                     self.add_token(TokenType::H1(title));
+                    self.add_token(TokenType::Br);
                 }
             }
             '\n' => {
+                self.add_token(TokenType::Br);
                 self.line += 1;
             }
             x => self.add_token(TokenType::Char(x)),

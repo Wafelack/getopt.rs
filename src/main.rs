@@ -1,6 +1,9 @@
 mod scanner;
 
-use scanner::{scanner::*, tokens::*};
+use lines_from_file::lines_from_file;
+use scanner::scanner::Scanner;
+use scanner::tokens::TokenType;
+use std::path::Path;
 
 #[cfg(test)]
 mod test {
@@ -25,9 +28,27 @@ mod test {
                 TokenType::H3(title) => println!("<h3>{}</h3>", title),
                 TokenType::Char(c) => println!("`{}`", c),
                 TokenType::Link(alt, link) => println!("<a href=\"{}\">{}</a>", link, alt),
+                TokenType::Br => println!("<br>"),
             }
         }
     }
 }
 
-fn main() {}
+fn usage() {
+    eprintln!("Usage: marsdown <filename>.md");
+    std::process::exit(-65);
+}
+
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 2 {
+        usage();
+    }
+    if !Path::new(&args[1]).exists() {
+        eprintln!("File not found");
+        usage();
+    }
+    let lines: String = lines_from_file(&args[1]).join("\n");
+
+    let mut scanner = Scanner::new(lines);
+}
