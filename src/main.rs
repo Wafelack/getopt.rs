@@ -1,6 +1,8 @@
+mod parser;
 mod scanner;
 
 use lines_from_file::lines_from_file;
+use parser::parser::parse_tokens;
 use scanner::scanner::Scanner;
 use scanner::tokens::TokenType;
 use std::path::Path;
@@ -32,6 +34,17 @@ mod test {
             }
         }
     }
+    #[test]
+    fn parsedprinting() {
+        let mut src =
+            "#Test\n##Test2\n###Test3 #notworking\n[my website](https://wafelack.fr)![alt](link) This is some text"
+                .to_string();
+        let mut scanner = Scanner::new(src.clone());
+        scanner.scan_tokens();
+        let parsed = parse_tokens(scanner.tokens);
+        println!("Base string : {:?}\n", src);
+        println!("Parsed string : {}", parsed)
+    }
 }
 
 fn usage() {
@@ -51,4 +64,5 @@ fn main() {
     let lines: String = lines_from_file(&args[1]).join("\n");
 
     let mut scanner = Scanner::new(lines);
+    let content = parse_tokens(scanner.tokens);
 }

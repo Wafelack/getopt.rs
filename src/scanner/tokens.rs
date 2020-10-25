@@ -1,3 +1,4 @@
+#[derive(PartialEq, Eq)]
 pub enum TokenType {
     Char(char),
     Link(String, String),
@@ -7,6 +8,7 @@ pub enum TokenType {
     H3(String),
     Br,
 }
+
 pub struct Token {
     pub toktype: TokenType,
     pub lexeme: String,
