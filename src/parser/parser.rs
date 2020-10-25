@@ -44,13 +44,7 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                         content.push_str("</p>\n")
                     }
                 }
-                TokenType::Br => {
-                    if let TokenType::Char(_) = toks[i - 1].toktype {
-                        content.push_str("</p>\n");
-                    } else {
-                        content.push_str("<br/>\n");
-                    }
-                }
+                TokenType::Br => (),
                 TokenType::H1(ref title) => {
                     content.push_str(format!("<h1>{}</h1>\n", title).as_str())
                 }
