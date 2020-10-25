@@ -78,7 +78,30 @@ impl Scanner {
                 }
             }
             ')' => self.add_token(TokenType::Char(')')),
-            '[' => self.add_token(TokenType::Char('[')), // temp
+            '[' => {
+                let mut alt = String::new();
+
+                while !self.next_is(']') {
+                    alt.push(self.advance());
+                }
+                self.advance();
+                if self.next_is('(') {
+                    let mut link = String::new();
+                    self.advance();
+                    while !self.next_is(')') {
+                        link.push(self.advance());
+                    }
+                    self.advance();
+                    self.add_token(TokenType::Link(alt, link));
+                } else {
+                    self.add_token(TokenType::Char('['));
+                    let chars: Vec<char> = alt.chars().collect();
+                    for c in chars {
+                        self.add_token(TokenType::Char(c));
+                    }
+                    self.add_token(TokenType::Char(']'));
+                }
+            } // temp
             ']' => self.add_token(TokenType::Char(']')),
             '!' => {
                 if self.next_is('[') {
@@ -116,14 +139,15 @@ impl Scanner {
                     if self.peek_next() == '#' {
                         self.advance();
                         let mut title = String::new();
-
-                        while self.peek_next() != '\n' {
+                        self.advance();
+                        while self.peek() != '\n' {
                             title.push(self.peek());
                             self.advance();
                         }
                         self.add_token(TokenType::H3(title));
                     } else {
                         let mut title = String::new();
+                        self.advance();
 
                         while self.peek() != '\n' {
                             title.push(self.peek());
