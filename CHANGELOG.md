@@ -17,3 +17,7 @@ Added code (`) and pre(|) support
 Transforming < & > into &rsaquo & &lsaquo
 
 Small imporvements to the whole thing.
+
+# 0.1.4
+
+Automatic id affectation for h1, h2 & h3
