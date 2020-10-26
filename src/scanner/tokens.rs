@@ -8,6 +8,10 @@ pub enum TokenType {
     H3(String),
     Hr,
     Br,
+    Pre(String),
+    Code(String),
+    Em(String),
+    Bold(String),
 }
 
 pub struct Token {

@@ -32,19 +32,10 @@ impl Scanner {
         self.chars[self.current - 1]
     }
     fn next_is(&mut self, expected: char) -> bool {
-        if self.is_at_end() {
+        if self.current >= self.chars.len() {
             return false;
         }
         if self.chars[self.current] != expected {
-            return false;
-        }
-        true
-    }
-    fn prev_is(&mut self, expected: char) -> bool {
-        if self.current < 2 {
-            return false;
-        }
-        if self.chars[self.current - 2] != expected {
             return false;
         }
         true
@@ -67,11 +58,7 @@ impl Scanner {
 
         match c {
             '(' => {
-                if self.prev_is(']') {
-                    // do link stuff
-                } else {
-                    self.add_token(TokenType::Char('('));
-                }
+                self.add_token(TokenType::Char('('));
             }
             ')' => self.add_token(TokenType::Char(')')),
             '[' => {
@@ -112,6 +99,56 @@ impl Scanner {
                 } else {
                     self.add_token(TokenType::Char('-'));
                 }
+            }
+            '*' => {
+                if self.next_is('*') {
+                    self.advance();
+                    let mut bold = String::new();
+                    while !self.next_is('*') {
+                        bold.push(self.advance());
+                    }
+                    self.advance();
+                    if self.next_is('*') {
+                        self.add_token(TokenType::Bold(bold));
+                        self.advance();
+                    } else {
+                        self.add_token(TokenType::Char('*'));
+                        self.add_token(TokenType::Char('*'));
+                        for c in bold.chars() {
+                            self.add_token(TokenType::Char(c));
+                        }
+                        self.add_token(TokenType::Char('*'));
+                    }
+                } else {
+                    let mut em = String::new();
+
+                    while !self.next_is('*') {
+                        em.push(self.advance());
+                    }
+                    self.advance();
+                    self.add_token(TokenType::Em(em));
+                }
+            }
+
+            '^' => {
+                let mut code = String::new();
+                while !self.next_is('^') {
+                    code.push(self.advance());
+                }
+                self.advance();
+                code = code.as_str().replace("<", "&lsaquo;").to_string();
+                code = code.as_str().replace(">", "&rsaquo;").to_string();
+                self.add_token(TokenType::Pre(code));
+            }
+            '`' => {
+                let mut code = String::new();
+                while !self.next_is('`') {
+                    code.push(self.advance());
+                }
+                self.advance();
+                code = code.as_str().replace("<", "&lsaquo;").to_string();
+                code = code.as_str().replace(">", "&rsaquo;").to_string();
+                self.add_token(TokenType::Code(code));
             }
             '!' => {
                 if self.next_is('[') {
@@ -181,9 +218,10 @@ impl Scanner {
             }
             '\n' => {
                 self.add_token(TokenType::Br);
-                self.line += 1;
             }
-            x => self.add_token(TokenType::Char(x)),
+            x => {
+                self.add_token(TokenType::Char(x));
+            }
         }
     }
     pub fn scan_tokens(&mut self) {
