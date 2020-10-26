@@ -113,6 +113,22 @@ impl Scanner {
                     self.add_token(TokenType::Char('-'));
                 }
             }
+            '^' => {
+                let mut code = String::new();
+                while !self.next_is('^') {
+                    code.push(self.advance());
+                }
+                self.advance();
+                self.add_token(TokenType::Pre(code));
+            }
+            '`' => {
+                let mut code = String::new();
+                while !self.next_is('`') {
+                    code.push(self.advance());
+                }
+                self.advance();
+                self.add_token(TokenType::Code(code));
+            }
             '!' => {
                 if self.next_is('[') {
                     self.advance();

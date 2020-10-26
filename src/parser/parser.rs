@@ -27,6 +27,12 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                     content.push_str(format!("<a href=\"{}\">{}</a>\n", link, alt).as_str())
                 }
                 TokenType::Hr => content.push_str("<hr>\n"),
+                TokenType::Code(ref code) => {
+                    content.push_str(format!("<code>{}</code>", code).as_str())
+                }
+                TokenType::Pre(ref code) => {
+                    content.push_str(format!("<pre>{}</pre>", code).as_str())
+                }
             }
         } else {
             match tok.toktype {
@@ -62,6 +68,12 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                     content.push_str(format!("<a href=\"{}\">{}</a>\n", link, alt).as_str())
                 }
                 TokenType::Hr => content.push_str("<hr>\n"),
+                TokenType::Code(ref code) => {
+                    content.push_str(format!("<code>{}</code>", code).as_str())
+                }
+                TokenType::Pre(ref code) => {
+                    content.push_str(format!("<pre>{}</pre>", code).as_str())
+                }
             }
         }
     }
