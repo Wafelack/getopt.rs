@@ -8,9 +8,9 @@
 
 # 0.1.2
 
-- Added code (`) and pre(|) support
+- Added code (`) and pre(^) support
 
-- | for pre doesn't follow the markdown reference
+- ^ for pre doesn't follow the markdown reference
 
 # 0.1.3
 
