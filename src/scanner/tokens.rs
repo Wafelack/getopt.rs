@@ -12,6 +12,7 @@ pub enum TokenType {
     Code(String),
     Em(String),
     Bold(String),
+    Strike(String),
 }
 
 pub struct Token {

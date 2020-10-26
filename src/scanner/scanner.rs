@@ -129,7 +129,28 @@ impl Scanner {
                     self.add_token(TokenType::Em(em));
                 }
             }
-
+            '~' => {
+                if self.next_is('~') {
+                    self.advance();
+                    let mut striked = String::new();
+                    while !self.next_is('~') {
+                        striked.push(self.advance());
+                    }
+                    self.advance();
+                    if self.next_is('~') {
+                        self.add_token(TokenType::Strike(striked));
+                    } else {
+                        self.add_token(TokenType::Char('~'));
+                        self.add_token(TokenType::Char('~'));
+                        for c in striked.chars() {
+                            self.add_token(TokenType::Char(c));
+                        }
+                        self.add_token(TokenType::Char('~'));
+                    }
+                } else {
+                    self.add_token(TokenType::Char('~'));
+                }
+            }
             '^' => {
                 let mut code = String::new();
                 while !self.next_is('^') {

@@ -24,4 +24,8 @@
 
 # 0.1.5
 
-- Adding bold and emphasis support with \* and \*\*
+- Added bold and emphasis support with \* and \*\*
+
+# 0.1.6
+
+- Added striked text support with ~~
