@@ -6,6 +6,7 @@ pub enum TokenType {
     H1(String),
     H2(String),
     H3(String),
+    Hr,
     Br,
 }
 

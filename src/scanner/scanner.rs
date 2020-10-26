@@ -99,6 +99,20 @@ impl Scanner {
                 }
             } // temp
             ']' => self.add_token(TokenType::Char(']')),
+            '-' => {
+                if self.next_is('-') {
+                    self.advance();
+                    if self.next_is('-') {
+                        self.advance();
+                        self.add_token(TokenType::Hr);
+                    } else {
+                        self.add_token(TokenType::Char('-'));
+                        self.add_token(TokenType::Char('-'));
+                    }
+                } else {
+                    self.add_token(TokenType::Char('-'));
+                }
+            }
             '!' => {
                 if self.next_is('[') {
                     self.advance();
