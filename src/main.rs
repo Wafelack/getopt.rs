@@ -102,9 +102,10 @@ fn main() -> std::io::Result<()> {
     <body>\n
         <articletitle>{}</articletitle>\n
         <article class=\"articlewrapper\">\n
-        <br>
+        
+        {}\n</article>\n<br>
         <p>Made with <a href=\"https://github.com/Wafelack/marsdown\">marsdown</a>
-        {}\n</article>\n</body>\n</html>",
+        \n</body>\n</html>",
         title, title, content
     );
     // End of personnal code
