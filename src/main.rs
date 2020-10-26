@@ -102,6 +102,8 @@ fn main() -> std::io::Result<()> {
     <body>\n
         <articletitle>{}</articletitle>\n
         <article class=\"articlewrapper\">\n
+        <br>
+        <p>Made with <a href=\"https://github.com/Wafelack/marsdown\">marsdown</a>
         {}\n</article>\n</body>\n</html>",
         title, title, content
     );
