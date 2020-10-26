@@ -11,6 +11,8 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                     content.push(c);
                 }
                 TokenType::Br => (),
+                TokenType::Bold(ref text) => content.push_str(format!("<b>{}</b>", text).as_str()),
+                TokenType::Em(ref text) => content.push_str(format!("<em>{}</em>", text).as_str()),
                 TokenType::H1(ref title) => {
                     content.push_str(format!("<h1>{}</h1>\n", title).as_str())
                 }
@@ -43,6 +45,10 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                         content.push(c);
                     } else if let TokenType::Link(_, _) = toks[i - 1].toktype {
                         content.push(c);
+                    } else if let TokenType::Bold(_) = toks[i - 1].toktype {
+                        content.push(c);
+                    } else if let TokenType::Em(_) = toks[i - 1].toktype {
+                        content.push(c);
                     } else {
                         content.push_str("<p>");
                         content.push(c);
@@ -52,13 +58,19 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                     } else if let TokenType::Char(_) = toks[i + 1].toktype {
                         continue;
                     } else if let TokenType::Code(_) = toks[i + 1].toktype {
-                        content.push(c);
+                        continue;
                     } else if let TokenType::Link(_, _) = toks[i + 1].toktype {
-                        content.push(c);
+                        continue;
+                    } else if let TokenType::Bold(_) = toks[i + 1].toktype {
+                        continue;
+                    } else if let TokenType::Em(_) = toks[i + 1].toktype {
+                        continue;
                     } else {
                         content.push_str("</p>\n")
                     }
                 }
+                TokenType::Bold(ref text) => content.push_str(format!("<b>{}</b>", text).as_str()),
+                TokenType::Em(ref text) => content.push_str(format!("<em>{}</em>", text).as_str()),
                 TokenType::Br => (),
                 TokenType::H1(ref title) => content.push_str(
                     format!(

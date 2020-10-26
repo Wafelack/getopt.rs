@@ -100,6 +100,36 @@ impl Scanner {
                     self.add_token(TokenType::Char('-'));
                 }
             }
+            '*' => {
+                if self.next_is('*') {
+                    self.advance();
+                    let mut bold = String::new();
+                    while !self.next_is('*') {
+                        bold.push(self.advance());
+                    }
+                    self.advance();
+                    if self.next_is('*') {
+                        self.add_token(TokenType::Bold(bold));
+                        self.advance();
+                    } else {
+                        self.add_token(TokenType::Char('*'));
+                        self.add_token(TokenType::Char('*'));
+                        for c in bold.chars() {
+                            self.add_token(TokenType::Char(c));
+                        }
+                        self.add_token(TokenType::Char('*'));
+                    }
+                } else {
+                    let mut em = String::new();
+
+                    while !self.next_is('*') {
+                        em.push(self.advance());
+                    }
+                    self.advance();
+                    self.add_token(TokenType::Em(em));
+                }
+            }
+
             '^' => {
                 let mut code = String::new();
                 while !self.next_is('^') {

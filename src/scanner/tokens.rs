@@ -10,6 +10,8 @@ pub enum TokenType {
     Br,
     Pre(String),
     Code(String),
+    Em(String),
+    Bold(String),
 }
 
 pub struct Token {
