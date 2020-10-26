@@ -11,3 +11,9 @@ Added hr support
 Added code (`) and pre(|) support
 
 | for pre doesn't follow the markdown reference
+
+# 0.1.3
+
+Transforming < & > into &rsaquo & &lsaquo
+
+Small imporvements to the whole thing.

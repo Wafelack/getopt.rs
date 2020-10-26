@@ -14,7 +14,7 @@ mod test {
     #[test]
     fn parsedprinting() {
         let src =
-            "#Test\n##Test2\n###Test3 #notworking\n^#!/bin/bash\n echo Hello, World !^\n`echo Test`---\n[my website](https://wafelack.fr)![alt](link) This is some text\ntest"
+            "#Test\n##Test2\n###Test3 #notworking\n^#!/bin/bash<pre>\n echo Hello, World !^\n`echo Test`---\n[my website](https://wafelack.fr)![alt](link) This is some text\ntest"
                 .to_string();
         let mut scanner = Scanner::new(src.clone());
         scanner.scan_tokens();
@@ -77,7 +77,7 @@ fn main() -> std::io::Result<()> {
         <articletitle>{}</articletitle>\n
         <article class=\"articlewrapper\">\n
         
-        {}\n</article>\n<br>
+        {}\n</article>\n<br><br><br><br><br>
         <p>Made with <a href=\"https://github.com/Wafelack/marsdown\">marsdown</a>
         \n</body>\n</html>",
         title, title, content

@@ -39,6 +39,10 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                 TokenType::Char(c) => {
                     if let TokenType::Char(_) = toks[i - 1].toktype {
                         content.push(c);
+                    } else if let TokenType::Code(_) = toks[i - 1].toktype {
+                        content.push(c);
+                    } else if let TokenType::Link(_, _) = toks[i - 1].toktype {
+                        content.push(c);
                     } else {
                         content.push_str("<p>");
                         content.push(c);
@@ -47,6 +51,10 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                         content.push_str("</p>\n");
                     } else if let TokenType::Char(_) = toks[i + 1].toktype {
                         continue;
+                    } else if let TokenType::Code(_) = toks[i + 1].toktype {
+                        content.push(c);
+                    } else if let TokenType::Link(_, _) = toks[i + 1].toktype {
+                        content.push(c);
                     } else {
                         content.push_str("</p>\n")
                     }
@@ -65,7 +73,7 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                     content.push_str(format!("<img src=\"{}\" alt=\"{}\"/>\n", link, alt).as_str())
                 }
                 TokenType::Link(ref alt, ref link) => {
-                    content.push_str(format!("<a href=\"{}\">{}</a>\n", link, alt).as_str())
+                    content.push_str(format!("<a href=\"{}\">{}</a><br>\n", link, alt).as_str())
                 }
                 TokenType::Hr => content.push_str("<hr>\n"),
                 TokenType::Code(ref code) => {

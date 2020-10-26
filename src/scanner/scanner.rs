@@ -32,19 +32,10 @@ impl Scanner {
         self.chars[self.current - 1]
     }
     fn next_is(&mut self, expected: char) -> bool {
-        if self.is_at_end() {
+        if self.current >= self.chars.len() {
             return false;
         }
         if self.chars[self.current] != expected {
-            return false;
-        }
-        true
-    }
-    fn prev_is(&mut self, expected: char) -> bool {
-        if self.current < 2 {
-            return false;
-        }
-        if self.chars[self.current - 2] != expected {
             return false;
         }
         true
@@ -67,11 +58,7 @@ impl Scanner {
 
         match c {
             '(' => {
-                if self.prev_is(']') {
-                    // do link stuff
-                } else {
-                    self.add_token(TokenType::Char('('));
-                }
+                self.add_token(TokenType::Char('('));
             }
             ')' => self.add_token(TokenType::Char(')')),
             '[' => {
@@ -119,6 +106,8 @@ impl Scanner {
                     code.push(self.advance());
                 }
                 self.advance();
+                code = code.as_str().replace("<", "&lsaquo;").to_string();
+                code = code.as_str().replace(">", "&rsaquo;").to_string();
                 self.add_token(TokenType::Pre(code));
             }
             '`' => {
@@ -127,6 +116,8 @@ impl Scanner {
                     code.push(self.advance());
                 }
                 self.advance();
+                code = code.as_str().replace("<", "&lsaquo;").to_string();
+                code = code.as_str().replace(">", "&rsaquo;").to_string();
                 self.add_token(TokenType::Code(code));
             }
             '!' => {
@@ -197,9 +188,10 @@ impl Scanner {
             }
             '\n' => {
                 self.add_token(TokenType::Br);
-                self.line += 1;
             }
-            x => self.add_token(TokenType::Char(x)),
+            x => {
+                self.add_token(TokenType::Char(x));
+            }
         }
     }
     pub fn scan_tokens(&mut self) {
