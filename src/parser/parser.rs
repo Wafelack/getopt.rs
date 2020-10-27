@@ -13,15 +13,30 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                 TokenType::Br => (),
                 TokenType::Bold(ref text) => content.push_str(format!("<b>{}</b>", text).as_str()),
                 TokenType::Em(ref text) => content.push_str(format!("<em>{}</em>", text).as_str()),
-                TokenType::H1(ref title) => {
-                    content.push_str(format!("<h1>{}</h1>\n", title).as_str())
-                }
-                TokenType::H2(ref title) => {
-                    content.push_str(format!("<h2>{}</h2>\n", title).as_str())
-                }
-                TokenType::H3(ref title) => {
-                    content.push_str(format!("<h3>{}</h3>\n", title).as_str())
-                }
+                TokenType::H1(ref title) => content.push_str(
+                    format!(
+                        "<h1 id=\"{}\">{}</h1>\n",
+                        title.as_str().replace(" ", "-").to_lowercase(),
+                        title
+                    )
+                    .as_str(),
+                ),
+                TokenType::H2(ref title) => content.push_str(
+                    format!(
+                        "<h2 id=\"{}\">{}</h2>\n",
+                        title.as_str().replace(" ", "-").to_lowercase(),
+                        title
+                    )
+                    .as_str(),
+                ),
+                TokenType::H3(ref title) => content.push_str(
+                    format!(
+                        "<h3 id=\"{}\">{}</h3>\n",
+                        title.as_str().replace(" ", "-").to_lowercase(),
+                        title
+                    )
+                    .as_str(),
+                ),
                 TokenType::Img(ref alt, ref link) => {
                     content.push_str(format!("<img src=\"{}\" alt=\"{}\"/>\n", link, alt).as_str())
                 }
@@ -29,6 +44,9 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                     content.push_str(format!("<a href=\"{}\">{}</a>\n", link, alt).as_str())
                 }
                 TokenType::Hr => content.push_str("<hr>\n"),
+                TokenType::Strike(ref text) => {
+                    content.push_str(format!("<s>{}</s>", text).as_str())
+                }
                 TokenType::Code(ref code) => {
                     content.push_str(format!("<code>{}</code>", code).as_str())
                 }
@@ -49,6 +67,8 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                         content.push(c);
                     } else if let TokenType::Em(_) = toks[i - 1].toktype {
                         content.push(c);
+                    } else if let TokenType::Strike(_) = toks[i - 1].toktype {
+                        continue;
                     } else {
                         content.push_str("<p>");
                         content.push(c);
@@ -65,9 +85,14 @@ pub fn parse_tokens(toks: Vec<Token>) -> String {
                         continue;
                     } else if let TokenType::Em(_) = toks[i + 1].toktype {
                         continue;
+                    } else if let TokenType::Strike(_) = toks[i + 1].toktype {
+                        continue;
                     } else {
                         content.push_str("</p>\n")
                     }
+                }
+                TokenType::Strike(ref text) => {
+                    content.push_str(format!("<s>{}</s>", text).as_str())
                 }
                 TokenType::Bold(ref text) => content.push_str(format!("<b>{}</b>", text).as_str()),
                 TokenType::Em(ref text) => content.push_str(format!("<em>{}</em>", text).as_str()),

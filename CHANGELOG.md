@@ -24,4 +24,17 @@
 
 # 0.1.5
 
-- Adding bold and emphasis support with \* and \*\*
+- Added bold and emphasis support with \* and \*\*
+
+# 0.1.6
+
+- Added striked text support with ~~
+
+# 0.1.7
+
+- Respecting markdown reference with ``` for pre blocks
+
+# 0.1.8
+
+- Following markdown reference with a blank space after #
+- Correting no id title if first token bug
