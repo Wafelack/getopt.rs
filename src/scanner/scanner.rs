@@ -231,37 +231,57 @@ impl Scanner {
             '#' => {
                 if self.next_is('#') {
                     self.advance();
-                    if self.peek_next() == '#' {
+                    if self.next_is('#') {
                         self.advance();
-                        let mut title = String::new();
-                        self.advance();
-                        while self.peek() != '\n' {
-                            title.push(self.peek());
+                        if self.next_is(' ') {
                             self.advance();
+                            let mut title = String::new();
+                            self.advance();
+                            while self.peek() != '\n' {
+                                title.push(self.peek());
+                                self.advance();
+                            }
+                            self.add_token(TokenType::H3(title));
+                            self.add_token(TokenType::Br);
+                        } else {
+                            self.advance();
+                            self.add_token(TokenType::Char('#'));
+                            self.add_token(TokenType::Char('#'));
+                            self.add_token(TokenType::Char('#'));
                         }
-                        self.add_token(TokenType::H3(title));
-                        self.add_token(TokenType::Br);
                     } else {
-                        let mut title = String::new();
-                        self.advance();
-
-                        while self.peek() != '\n' {
-                            title.push(self.peek());
+                        if self.next_is(' ') {
                             self.advance();
+
+                            let mut title = String::new();
+                            self.advance();
+
+                            while self.peek() != '\n' {
+                                title.push(self.peek());
+                                self.advance();
+                            }
+                            self.add_token(TokenType::H2(title));
+                            self.add_token(TokenType::Br);
+                        } else {
+                            self.add_token(TokenType::Char('#'));
+                            self.add_token(TokenType::Char('#'));
                         }
-                        self.add_token(TokenType::H2(title));
-                        self.add_token(TokenType::Br);
                     }
                 } else {
-                    let mut title = String::new();
-                    self.advance();
-
-                    while self.peek() != '\n' {
-                        title.push(self.peek());
+                    if self.next_is(' ') {
+                        let mut title = String::new();
                         self.advance();
+                        self.advance();
+
+                        while self.peek() != '\n' {
+                            title.push(self.peek());
+                            self.advance();
+                        }
+                        self.add_token(TokenType::H1(title));
+                        self.add_token(TokenType::Br);
+                    } else {
+                        self.add_token(TokenType::Char('#'));
                     }
-                    self.add_token(TokenType::H1(title));
-                    self.add_token(TokenType::Br);
                 }
             }
             '\n' => {
