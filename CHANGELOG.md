@@ -29,3 +29,7 @@
 # 0.1.6
 
 - Added striked text support with ~~
+
+# 0.1.7
+
+- Respecting markdown reference with ``` for pre blocks

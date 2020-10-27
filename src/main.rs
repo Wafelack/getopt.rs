@@ -14,7 +14,7 @@ mod test {
     #[test]
     fn parsedprinting() {
         let src =
-            "#Test\n##Test2\n###Test3 #notworking\n^#!/bin/bash<pre>\n echo Hello, World !^\nThis is a **bold** paragraph with *emphasis* and ~~striked~~ text\n`echo Test`---\n[my website](https://wafelack.fr)![alt](link) This is some text\ntest"
+            "#Test\n##Test2\n###Test3 #notworking\n```echo Hello,World!\ngit clone https://github.com/Wafelack/Ark.vim ~/.vim/bundle/Ark```\nThis is a **bold** paragraph with *emphasis* and ~~striked~~ text\n`echo Test`---\n[my website](https://wafelack.fr)![alt](link) This is some text\ntest"
                 .to_string();
         let mut scanner = Scanner::new(src.clone());
         scanner.scan_tokens();
