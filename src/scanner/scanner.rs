@@ -180,9 +180,9 @@ impl Scanner {
                     {
                         pre.push(self.advance());
                     }
-                    self.advance();
-                    self.advance();
-                    self.advance();
+                    while self.next_is('`') {
+                        self.advance();
+                    }
                     pre = pre.as_str().replace("<", "&lsaquo;");
                     pre = pre.as_str().replace(">", "&rsaquo;");
 
