@@ -108,7 +108,9 @@ fn main() -> std::io::Result<()> {
     // End of personnal code
 
     let mut file = File::create("index.html")?;
-    file.write_all(full.as_bytes())?; // If you deleted code above, replace `full` by `content`
+    file.write_all(full.as_bytes())?;
+
+    // file.write_all(content.as_bytes())?;
 
     Ok(())
 }
