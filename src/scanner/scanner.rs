@@ -32,7 +32,7 @@ impl Scanner {
         self.chars[self.current - 1]
     }
     fn next_is(&mut self, expected: char) -> bool {
-        if self.is_at_end() {
+        if self.current >= self.chars.len() {
             return false;
         }
         if self.chars[self.current] != expected {
@@ -40,11 +40,20 @@ impl Scanner {
         }
         true
     }
-    fn prev_is(&mut self, expected: char) -> bool {
-        if self.current < 2 {
+    fn double_next_is(&mut self, expected: char) -> bool {
+        if self.current + 1 >= self.chars.len() {
             return false;
         }
-        if self.chars[self.current - 2] != expected {
+        if self.chars[self.current + 1] != expected {
+            return false;
+        }
+        true
+    }
+    fn triple_next_is(&mut self, expected: char) -> bool {
+        if self.current + 2 >= self.chars.len() {
+            return false;
+        }
+        if self.chars[self.current + 2] != expected {
             return false;
         }
         true
@@ -67,11 +76,7 @@ impl Scanner {
 
         match c {
             '(' => {
-                if self.prev_is(']') {
-                    // do link stuff
-                } else {
-                    self.add_token(TokenType::Char('('));
-                }
+                self.add_token(TokenType::Char('('));
             }
             ')' => self.add_token(TokenType::Char(')')),
             '[' => {
@@ -113,6 +118,86 @@ impl Scanner {
                     self.add_token(TokenType::Char('-'));
                 }
             }
+            '*' => {
+                if self.next_is('*') {
+                    self.advance();
+                    let mut bold = String::new();
+                    while !self.next_is('*') {
+                        bold.push(self.advance());
+                    }
+                    self.advance();
+                    if self.next_is('*') {
+                        self.add_token(TokenType::Bold(bold));
+                        self.advance();
+                    } else {
+                        self.add_token(TokenType::Char('*'));
+                        self.add_token(TokenType::Char('*'));
+                        for c in bold.chars() {
+                            self.add_token(TokenType::Char(c));
+                        }
+                        self.add_token(TokenType::Char('*'));
+                    }
+                } else {
+                    let mut em = String::new();
+
+                    while !self.next_is('*') {
+                        em.push(self.advance());
+                    }
+                    self.advance();
+                    self.add_token(TokenType::Em(em));
+                }
+            }
+            '~' => {
+                if self.next_is('~') {
+                    self.advance();
+                    let mut striked = String::new();
+                    while !self.next_is('~') {
+                        striked.push(self.advance());
+                    }
+                    self.advance();
+                    if self.next_is('~') {
+                        self.add_token(TokenType::Strike(striked));
+                    } else {
+                        self.add_token(TokenType::Char('~'));
+                        self.add_token(TokenType::Char('~'));
+                        for c in striked.chars() {
+                            self.add_token(TokenType::Char(c));
+                        }
+                        self.add_token(TokenType::Char('~'));
+                    }
+                } else {
+                    self.add_token(TokenType::Char('~'));
+                }
+            }
+            '`' => {
+                if self.next_is('`') && self.double_next_is('`') {
+                    self.advance();
+                    self.advance();
+                    let mut pre = String::new();
+                    while !self.next_is('`')
+                        && !self.double_next_is('`')
+                        && !self.triple_next_is('`')
+                    {
+                        pre.push(self.advance());
+                    }
+                    self.advance();
+                    self.advance();
+                    self.advance();
+                    pre = pre.as_str().replace("<", "&lsaquo;");
+                    pre = pre.as_str().replace(">", "&rsaquo;");
+
+                    self.add_token(TokenType::Pre(pre));
+                } else {
+                    let mut code = String::new();
+                    while !self.next_is('`') {
+                        code.push(self.advance());
+                    }
+                    self.advance();
+                    code = code.as_str().replace("<", "&lsaquo;").to_string();
+                    code = code.as_str().replace(">", "&rsaquo;").to_string();
+                    self.add_token(TokenType::Code(code));
+                }
+            }
             '!' => {
                 if self.next_is('[') {
                     self.advance();
@@ -146,44 +231,65 @@ impl Scanner {
             '#' => {
                 if self.next_is('#') {
                     self.advance();
-                    if self.peek_next() == '#' {
+                    if self.next_is('#') {
                         self.advance();
-                        let mut title = String::new();
-                        self.advance();
-                        while self.peek() != '\n' {
-                            title.push(self.peek());
+                        if self.next_is(' ') {
                             self.advance();
+                            let mut title = String::new();
+                            self.advance();
+                            while self.peek() != '\n' {
+                                title.push(self.peek());
+                                self.advance();
+                            }
+                            self.add_token(TokenType::H3(title));
+                            self.add_token(TokenType::Br);
+                        } else {
+                            self.advance();
+                            self.add_token(TokenType::Char('#'));
+                            self.add_token(TokenType::Char('#'));
+                            self.add_token(TokenType::Char('#'));
                         }
-                        self.add_token(TokenType::H3(title));
-                        self.add_token(TokenType::Br);
                     } else {
-                        let mut title = String::new();
-                        self.advance();
-
-                        while self.peek() != '\n' {
-                            title.push(self.peek());
+                        if self.next_is(' ') {
                             self.advance();
+
+                            let mut title = String::new();
+                            self.advance();
+
+                            while self.peek() != '\n' {
+                                title.push(self.peek());
+                                self.advance();
+                            }
+                            self.add_token(TokenType::H2(title));
+                            self.add_token(TokenType::Br);
+                        } else {
+                            self.add_token(TokenType::Char('#'));
+                            self.add_token(TokenType::Char('#'));
                         }
-                        self.add_token(TokenType::H2(title));
-                        self.add_token(TokenType::Br);
                     }
                 } else {
-                    let mut title = String::new();
-                    self.advance();
-
-                    while self.peek() != '\n' {
-                        title.push(self.peek());
+                    if self.next_is(' ') {
+                        let mut title = String::new();
                         self.advance();
+                        self.advance();
+
+                        while self.peek() != '\n' {
+                            title.push(self.peek());
+                            self.advance();
+                        }
+                        self.add_token(TokenType::H1(title));
+                        self.add_token(TokenType::Br);
+                    } else {
+                        self.add_token(TokenType::Char('#'));
                     }
-                    self.add_token(TokenType::H1(title));
-                    self.add_token(TokenType::Br);
                 }
             }
             '\n' => {
                 self.add_token(TokenType::Br);
-                self.line += 1;
             }
-            x => self.add_token(TokenType::Char(x)),
+            x => {
+                self.add_token(TokenType::Char(x));
+            }
         }
     }
     pub fn scan_tokens(&mut self) {
