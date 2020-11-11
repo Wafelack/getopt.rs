@@ -77,7 +77,7 @@ fn main() -> std::io::Result<()> {
         <articletitle>{}</articletitle>\n
         <article class=\"articlewrapper\">\n
         
-        {}\n</article>\n<br><br><br><br><br>
+        {}\n</article>\n
         <p>Made with <a href=\"https://github.com/Wafelack/marsdown\">marsdown</a>
         \n</body>\n</html>",
         title, title, content
