@@ -38,3 +38,7 @@
 
 - Following markdown reference with a blank space after #
 - Correting no id title if first token bug
+
+# 0.1.9
+
+- Removing \<br> 
