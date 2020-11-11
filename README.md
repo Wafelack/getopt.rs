@@ -1,10 +1,8 @@
 # Marsdown
 
-Markdown parser written in rust
+Markdown parser written in pure rust
 
 There is also [a crate](https://crates.io/crates/parsedown) available with this system.
-
-Comment lines 88 to 108 and 111 and uncomment line 113 if you don't want my formatting.
 
 ## Usage
 
