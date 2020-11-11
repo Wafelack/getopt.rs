@@ -41,4 +41,5 @@
 
 # 0.1.9
 
+- Fixing \<code> after \<pre> bug
 - Removing \<br> 
