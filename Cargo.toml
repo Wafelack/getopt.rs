@@ -1,10 +1,14 @@
 [package]
-name = "marsdown"
-version = "0.1.9"
-authors = ["Wafelack <wafelack@protonmail.com>"]
+name = "getopt_rs"
+version = "0.1.0"
+authors = ["wafelack <wafelack@protonmail.com>"]
 edition = "2018"
+description = "Get command line options."
+repository = "https://github.com/wafelack/getopt.rs"
+license = "GPL-3.0"
+keywords = ["getopt", "cli", "parsing"]
+categories = ["command-line-interface"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-lines_from_file = "0.1.2"
