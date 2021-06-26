@@ -9,7 +9,7 @@ license = "GPL-3.0"
 keywords = ["getopt", "cli", "parsing"]
 categories = ["command-line-interface"]
 documentation = "https://docs.rs/getopt_rs"
-readme = "https://github.com/Wafelack/getopt.rs/blob/master/readme.md"
+readme = "readme.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
