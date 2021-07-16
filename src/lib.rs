@@ -11,7 +11,7 @@
 /// short options. An option can be present only in the short form.
 ///
 /// If no matching option is found, `None` is returned.  
-/// If a mandatory value is not given, an error message is displayed and `Some(('\0', None))` is
+/// If a mandatory value is not given, an error message is displayed and `Some(('?', None))` is
 /// returned.  
 /// If the option doesn't take an argument or if an optional argument is not given, `Some((opt,
 /// None))` is returned.
@@ -29,12 +29,16 @@
 ///             ('a', _) => println!("Found option 'a' that takes no argument."),
 ///             ('b', val) => println!("Found option 'b' that takes an optional argument: {:?}.", val),
 ///             ('c', val) => println!("Found option 'c' that takes a mandatory argument: {:?}", val.unwrap()),
-///             _ => return, /* An error occured, Some(('\0', None)) is returned. */
+///             _ => return, /* An error occured, Some(('?', None)) is returned. */
 ///         }
 ///     }
 /// }
 /// ```
-pub fn getopt(args: &mut Vec<String>, optstring: &str, long_opts: &[(char, &str)]) -> Option<(char, Option<String>)> {
+pub fn getopt(
+    args: &mut Vec<String>,
+    optstring: &str,
+    long_opts: &[(char, &str)],
+) -> Option<(char, Option<String>)> {
     let mut optchars = optstring.chars();
     while let Some(c) = optchars.next() {
         let short_prefix = format!("-{}", c);
@@ -45,25 +49,43 @@ pub fn getopt(args: &mut Vec<String>, optstring: &str, long_opts: &[(char, &str)
             None
         };
         if let Some(idx) = args.iter().position(|a| a == &short_prefix) {
+            args.remove(idx);
+            return procopt(args, c, idx, optchars.next());
+        } else if let Some(idx) = args
+            .iter()
+            .position(|a| a.contains(c) && a.starts_with('-') && a.len() > 1)
+        {
+            let cidx = if let Some(idx) = args[idx].chars().position(|a| a == c) {
+                idx
+            } else {
+                unreachable!()
+            };
+            args[idx].remove(cidx);
             return procopt(args, c, idx, optchars.next());
         } else if let Some((short, long)) = long_prefix {
             if let Some(idx) = args.iter().position(|a| a == &long) {
+                args.remove(idx);
                 return procopt(args, c, idx, optchars.next());
             } else if let Some(idx) = args.iter().position(|a| a == &short) {
+                args.remove(idx);
                 return procopt(args, c, idx, optchars.next());
-            } 
+            }
         }
     }
     None
 }
-fn procopt(args: &mut Vec<String>, c: char, idx: usize, next: Option<char>) -> Option<(char, Option<String>)> {
-    args.remove(idx);
+fn procopt(
+    args: &mut Vec<String>,
+    c: char,
+    idx: usize,
+    next: Option<char>,
+) -> Option<(char, Option<String>)> {
     let value = if let Some(n) = next {
         let available = idx < args.len();
         if !available {
             if n == ':' {
                 eprintln!("{}: Option '{}' requires an argument.", args[0], c);
-                return Some(('\0', None));
+                return Some(('?', None));
             } else {
                 None
             }
