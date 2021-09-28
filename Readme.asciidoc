@@ -1,0 +1,9 @@
+== getopt.rs
+
++getopt+ like library for Rust.
+
++getopt.rs+ is a simple command line options parser fitting under 150 lines of code.
+
+=== License
+
+This work is licensed under the GNU General Public License version 3.0 or any later version (GPLv3+).
